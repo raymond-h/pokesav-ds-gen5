@@ -1,0 +1,17 @@
+{
+  "env": {
+    "node": true,
+    "es6": true
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": "2018"
+  },
+  "extends": [
+    "kellyirc"
+  ],
+  "rules": {
+    "require-yield": "off",
+    "indent": ["error", 2]
+  }
+}
