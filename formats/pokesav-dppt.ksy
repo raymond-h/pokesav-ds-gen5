@@ -113,6 +113,35 @@ enums:
     22: cdba
     23: dcba
 
+  pokeball:
+    0x01: master_ball
+    0x02: ultra_ball
+    0x03: great_ball
+    0x04: poke_ball
+    0x05: safari_ball
+    0x06: net_ball
+    0x07: dive_ball
+    0x08: nest_ball
+    0x09: repeat_ball
+    0x0A: timer_ball
+    0x0B: luxury_ball
+    0x0C: premier_ball
+    0x0D: dusk_ball
+    0x0E: heal_ball
+    0x0F: quick_ball
+    0x10: cherish_ball
+
+  hgss_pokeball:
+    0xEC: fast_ball
+    0xED: level_ball
+    0xEE: lure_ball
+    0xEF: heavy_ball
+    0xF0: love_ball
+    0xF1: friend_ball
+    0xF2: moon_ball
+    0xF3: competition_ball
+    0xF4: park_ball
+
 types:
   general_block:
     seq:
@@ -196,54 +225,181 @@ types:
         value: ((personality_value >> 0xD) & 0x1F) % 24
         enum: pokemon_block_order
 
-  pokemon_data:
-    seq:
-      - id: block_a
-        type: pokemon_block_a
-      - id: block_b
-        type: pokemon_block_b
-      - id: block_c
-        type: pokemon_block_c
-      - id: block_d
-        type: pokemon_block_d
-
-  pokemon_block_a:
-    seq:
-      - id: national_pokedex_id
-        type: u2
-      - id: junk
-        size: 30
-
-    instances:
-      original_trainer_id:
-        pos: 0x0C - 8
-        type: u2
-
-      original_trainer_secret_id:
-        pos: 0x0E - 8
-        type: u2
-
-  pokemon_block_b:
-    seq:
-      - id: junk
-        size: 32
-
-  pokemon_block_c:
-    seq:
-      - id: junk
-        size: 32
-
-  pokemon_block_d:
-    seq:
-      - id: junk
-        size: 32
-
   encrypted_pokemon_in_party:
     seq:
       - id: base
         type: encrypted_pokemon
       - id: rest
         size: 100
+
+  pokemon_data:
+    seq:
+      - id: block_a
+        type: pokemon_block_a
+        size: 32
+      - id: block_b
+        type: pokemon_block_b
+        size: 32
+      - id: block_c
+        type: pokemon_block_c
+        size: 32
+      - id: block_d
+        type: pokemon_block_d
+        size: 32
+
+  pokemon_block_a:
+    seq:
+      - id: national_pokedex_id
+        type: u2
+      - id: held_item
+        type: u2
+      - id: original_trainer_id
+        type: u2
+      - id: original_trainer_secret_id
+        type: u2
+      - id: experience_points
+        type: u4
+      - id: friendship
+        type: u1
+      - id: ability
+        type: u1
+      - id: markings
+        type: u1
+      - id: original_language
+        type: u1
+      - id: ev
+        type: evs
+      - id: contest_values
+        size: 6
+      - id: sinnoh_ribbons
+        size: 4
+
+  evs:
+    seq:
+      - id: hp
+        type: u1
+      - id: attack
+        type: u1
+      - id: defense
+        type: u1
+      - id: speed
+        type: u1
+      - id: special_attack
+        type: u1
+      - id: special_defense
+        type: u1
+
+  pokemon_block_b:
+    seq:
+      - id: moves
+        type: u2
+        repeat: expr
+        repeat-expr: 4
+      - id: move_pps
+        type: u1
+        repeat: expr
+        repeat-expr: 4
+      - id: move_pp_ups
+        type: u1
+        repeat: expr
+        repeat-expr: 4
+      - id: iv
+        type: ivs
+      - id: hoenn_ribbons
+        size: 4
+      - id: fateful_encounter
+        type: b1
+      - id: is_female
+        type: b1
+      - id: is_genderless
+        type: b1
+      - id: forme
+        type: b5
+      - id: hgss_shiny_leaves
+        type: u1
+      - id: unused
+        size: 2
+      - id: platinum_egg_location
+        type: u2
+      - id: platinum_met_at_location
+        type: u2
+
+    instances:
+      is_egg:
+        value: iv.is_egg
+      is_nicknamed:
+        value: iv.is_nicknamed
+
+  ivs:
+    seq:
+      - id: flags
+        type: u4
+
+    instances:
+      hp:
+        value: (flags >> 0) & 0b1_1111
+      attack:
+        value: (flags >> 5) & 0b1_1111
+      defense:
+        value: (flags >> 10) & 0b1_1111
+      speed:
+        value: (flags >> 15) & 0b1_1111
+      special_attack:
+        value: (flags >> 20) & 0b1_1111
+      special_defense:
+        value: (flags >> 25) & 0b1_1111
+
+      is_egg:
+        value: (flags >> 30) & 1 == 1
+      is_nicknamed:
+        value: (flags >> 31) & 1 == 1
+
+  pokemon_block_c:
+    seq:
+      - id: nickname
+        type: u2
+        repeat: expr
+        repeat-expr: 11
+      - id: unused
+        type: u1
+      - id: origin_game
+        type: u1
+      - id: sinnoh_ribbons
+        size: 4
+      - id: unused_2
+        size: 4
+
+  pokemon_block_d:
+    seq:
+      - id: original_trainer_name
+        type: u2
+        repeat: expr
+        repeat-expr: 8
+      - id: date_egg_received
+        size: 3
+      - id: date_met
+        size: 3
+      - id: diamond_pearl_egg_location
+        type: u2
+      - id: diamond_pearl_met_at_location
+        type: u2
+      - id: pokerus
+        type: u1
+      - id: pokeball
+        type: u1
+        enum: pokeball
+      - id: original_trainer_gender
+        type: b1
+        enum: trainer_gender
+      - id: met_at_level
+        type: b7
+      - id: encounter_type
+        type: u1
+      - id: hgss_pokeball
+        type: u1
+        enum: hgss_pokeball
+      - id: unused
+        type: u1
 
   storage_block:
     seq:
@@ -279,3 +435,10 @@ types:
         size: 2
       - id: checksum
         type: u2
+
+  test_thing:
+    seq:
+      - id: first
+        type: b10
+      - id: second
+        type: b6

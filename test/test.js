@@ -6,7 +6,7 @@ import kaitaiStruct from 'kaitai-struct';
 import PokesavDppt from '../formats-compiled/PokesavDppt';
 
 import { asDate } from '../lib/util';
-import { decryptPokemonBuffer } from '../lib/encryption-and-order';
+import { decryptPokemon } from '../lib/encryption-and-order';
 
 test.beforeEach(async t => {
   const savefile = await fse.readFile(
@@ -20,11 +20,7 @@ test.beforeEach(async t => {
 
   t.context.decryptedParty = t.context.data.generalBlockCurrent.partyPokemon
     .map(pkmn => {
-      const decryptedData = decryptPokemonBuffer(
-        Buffer.from(pkmn.base.encryptedData),
-        pkmn.base.blockOrder,
-        pkmn.base.checksum
-      );
+      const decryptedData = decryptPokemon(pkmn.base);
 
       return {
         base: pkmn,
@@ -54,4 +50,38 @@ test('all pokemon in party belong to this savefile', t => {
     t.is(originalTrainerId, trainerId, `expected pokemon #${++i}'s trainer ID to match savefile's trainer ID`);
     t.is(originalTrainerSecretId, secretId, `expected pokemon #${i}'s secret ID to match savefile's secret ID`);
   }
+});
+
+test('correct ivs and isEgg, isNicknamed flags', t => {
+  const party = t.context.decryptedParty;
+
+  const expected = [
+    {
+      ivHp: 24,
+      ivAttack: 25,
+      ivDefense: 16,
+      ivSpeed: 6,
+      ivSpecialAttack: 27,
+      ivSpecialDefense: 2
+    },
+    {
+      ivHp: 28,
+      ivAttack: 2,
+      ivDefense: 13,
+      ivSpeed: 11,
+      ivSpecialAttack: 31,
+      ivSpecialDefense: 15
+    }
+  ];
+
+  const actual = party.map(pkmn => ({
+    ivHp: pkmn.data.blockB.iv.hp,
+    ivAttack: pkmn.data.blockB.iv.attack,
+    ivDefense: pkmn.data.blockB.iv.defense,
+    ivSpeed: pkmn.data.blockB.iv.speed,
+    ivSpecialAttack: pkmn.data.blockB.iv.specialAttack,
+    ivSpecialDefense: pkmn.data.blockB.iv.specialDefense
+  }));
+
+  t.deepEqual(actual, expected, 'expected IVs to be correct');
 });
