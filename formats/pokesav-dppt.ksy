@@ -278,6 +278,7 @@ types:
         type: u1
       - id: original_language
         type: u1
+        enum: country_of_origin
       - id: ev
         type: evs
       - id: contest_values
