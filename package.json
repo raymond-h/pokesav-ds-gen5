@@ -15,6 +15,7 @@
     "ava": "^0.25.0",
     "eslint": "^4.17.0",
     "eslint-config-kellyirc": "^3.1.0",
+    "falafel": "^2.1.0",
     "fs-extra": "^5.0.0",
     "js-yaml": "^3.10.0",
     "jsverify": "^0.8.3",

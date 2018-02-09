@@ -6,7 +6,6 @@ import kaitaiStruct from 'kaitai-struct';
 import PokesavDppt from '../formats-compiled/PokesavDppt';
 
 import { asDate } from '../lib/util';
-import { decryptPokemon } from '../lib/encryption-and-order';
 
 test.beforeEach(async t => {
   const savefile = await fse.readFile(
@@ -18,17 +17,7 @@ test.beforeEach(async t => {
     new kaitaiStruct.KaitaiStream(savefile)
   );
 
-  t.context.decryptedParty = t.context.data.generalBlockCurrent.partyPokemon
-    .map(pkmn => {
-      const decryptedData = decryptPokemon(pkmn.base);
-
-      return {
-        base: pkmn,
-        data: new PokesavDppt.PokemonData(
-          new kaitaiStruct.KaitaiStream(decryptedData)
-        )
-      };
-    });
+  t.context.currentGeneralBlock = t.context.data.generalBlockCurrent;
 });
 
 test('adventure started', t => {
@@ -39,11 +28,11 @@ test('adventure started', t => {
 });
 
 test('all pokemon in party belong to this savefile', t => {
-  const trainerId = t.context.data.generalBlockCurrent.trainerId;
-  const secretId = t.context.data.generalBlockCurrent.secretId;
+  const trainerId = t.context.currentGeneralBlock.trainerId;
+  const secretId = t.context.currentGeneralBlock.secretId;
 
   let i = 0;
-  for(const { data } of t.context.decryptedParty) {
+  for(const { data } of t.context.currentGeneralBlock.partyPokemon.map(pkmn => pkmn.base)) {
     const originalTrainerId = data.blockA.originalTrainerId;
     const originalTrainerSecretId = data.blockA.originalTrainerSecretId;
 
@@ -53,7 +42,7 @@ test('all pokemon in party belong to this savefile', t => {
 });
 
 test('correct ivs and isEgg, isNicknamed flags', t => {
-  const party = t.context.decryptedParty;
+  const party = t.context.currentGeneralBlock.partyPokemon;
 
   const expected = [
     {
@@ -74,7 +63,7 @@ test('correct ivs and isEgg, isNicknamed flags', t => {
     }
   ];
 
-  const actual = party.map(pkmn => ({
+  const actual = party.map(pkmn => pkmn.base).map(pkmn => ({
     ivHp: pkmn.data.blockB.iv.hp,
     ivAttack: pkmn.data.blockB.iv.attack,
     ivDefense: pkmn.data.blockB.iv.defense,

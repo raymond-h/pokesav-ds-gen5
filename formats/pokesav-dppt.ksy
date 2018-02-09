@@ -196,7 +196,7 @@ types:
         type: u1
       party_pokemon:
         pos: 0x98
-        type: encrypted_pokemon_in_party
+        type: pokemon_in_party
         repeat: expr
         repeat-expr: party_pokemon_count
 
@@ -209,7 +209,7 @@ types:
       - id: seconds
         type: u1
 
-  encrypted_pokemon:
+  pokemon:
     seq:
       - id: personality_value
         type: u4
@@ -217,18 +217,29 @@ types:
         size: 2
       - id: checksum
         type: u2
-      - id: encrypted_data
+      - id: data
+        type: pokemon_data
         size: 128
+        process: pokesav.pokemon_decrypt(block_order, checksum)
 
     instances:
       block_order:
         value: ((personality_value >> 0xD) & 0x1F) % 24
         enum: pokemon_block_order
 
-  encrypted_pokemon_in_party:
+      block_a:
+        value: data.block_a
+      block_b:
+        value: data.block_b
+      block_c:
+        value: data.block_c
+      block_d:
+        value: data.block_d
+
+  pokemon_in_party:
     seq:
       - id: base
-        type: encrypted_pokemon
+        type: pokemon
       - id: rest
         size: 100
 
