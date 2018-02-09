@@ -209,6 +209,13 @@ types:
       - id: seconds
         type: u1
 
+  pokemon_in_party:
+    seq:
+      - id: base
+        type: pokemon
+      - id: rest
+        size: 100
+
   pokemon:
     seq:
       - id: personality_value
@@ -235,13 +242,6 @@ types:
         value: data.block_c
       block_d:
         value: data.block_d
-
-  pokemon_in_party:
-    seq:
-      - id: base
-        type: pokemon
-      - id: rest
-        size: 100
 
   pokemon_data:
     seq:
