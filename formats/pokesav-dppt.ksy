@@ -61,6 +61,58 @@ enums:
     0x3F: lady
     0x46: psychic
 
+  pokemon_block_order:
+    0: abcd
+    1: abdc
+    2: acbd
+    3: acdb
+    4: adbc
+    5: adcb
+    6: bacd
+    7: badc
+    8: bcad
+    9: bcda
+    10: bdac
+    11: bdca
+    12: cabd
+    13: cadb
+    14: cbad
+    15: cbda
+    16: cdab
+    17: cdba
+    18: dabc
+    19: dacb
+    20: dbac
+    21: dbca
+    22: dcab
+    23: dcba
+
+  pokemon_inverse_block_order:
+    0: abcd
+    1: abdc
+    2: acbd
+    3: adbc
+    4: acdb
+    5: adcb
+    6: bacd
+    7: badc
+    8: cabd
+    9: dabc
+    10: cadb
+    11: dacb
+    12: bcad
+    13: bdac
+    14: cbad
+    15: dbac
+    16: cdab
+    17: dcab
+    18: bcda
+    19: bdca
+    20: cbda
+    21: dbca
+    22: cdba
+    23: dcba
+
 types:
   general_block:
     seq:
@@ -115,7 +167,7 @@ types:
         type: u1
       party_pokemon:
         pos: 0x98
-        type: pokemon
+        type: encrypted_pokemon_in_party
         repeat: expr
         repeat-expr: party_pokemon_count
 
@@ -128,10 +180,70 @@ types:
       - id: seconds
         type: u1
 
-  pokemon:
+  encrypted_pokemon:
     seq:
-      - id: raw
-        size: 236
+      - id: personality_value
+        type: u4
+      - id: junk
+        size: 2
+      - id: checksum
+        type: u2
+      - id: encrypted_data
+        size: 128
+
+    instances:
+      block_order:
+        value: ((personality_value >> 0xD) & 0x1F) % 24
+        enum: pokemon_block_order
+
+  pokemon_data:
+    seq:
+      - id: block_a
+        type: pokemon_block_a
+      - id: block_b
+        type: pokemon_block_b
+      - id: block_c
+        type: pokemon_block_c
+      - id: block_d
+        type: pokemon_block_d
+
+  pokemon_block_a:
+    seq:
+      - id: national_pokedex_id
+        type: u2
+      - id: junk
+        size: 30
+
+    instances:
+      original_trainer_id:
+        pos: 0x0C - 8
+        type: u2
+
+      original_trainer_secret_id:
+        pos: 0x0E - 8
+        type: u2
+
+  pokemon_block_b:
+    seq:
+      - id: junk
+        size: 32
+
+  pokemon_block_c:
+    seq:
+      - id: junk
+        size: 32
+
+  pokemon_block_d:
+    seq:
+      - id: junk
+        size: 32
+
+  encrypted_pokemon_in_party:
+    seq:
+      - id: base
+        type: encrypted_pokemon
+      - id: rest
+        size: 100
 
   storage_block:
     seq:
