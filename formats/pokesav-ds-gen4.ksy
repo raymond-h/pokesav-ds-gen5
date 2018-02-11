@@ -189,6 +189,33 @@ enums:
     22: cdba
     23: dcba
 
+  nature:
+    0:  hardy
+    1:  lonely
+    2:  brave
+    3:  adamant
+    4:  naughty
+    5:  bold
+    6:  docile
+    7:  relaxed
+    8:  impish
+    9:  lax
+    10: timid
+    11: hasty
+    12: serious
+    13: jolly
+    14: naive
+    15: modest
+    16: mild
+    17: quiet
+    18: bashful
+    19: rash
+    20: calm
+    21: gentle
+    22: sassy
+    23: careful
+    24: quirky
+
   pokeball:
     0x01: master_ball
     0x02: ultra_ball
@@ -323,6 +350,10 @@ types:
         value: data.block_c
       block_d:
         value: data.block_d
+
+      nature:
+        value: personality_value % 25
+        enum: nature
 
   pokemon_data:
     seq:
