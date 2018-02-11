@@ -101,9 +101,9 @@ instances:
 enums:
   game:
     0: unknown
-    1: diamond_pearl
-    2: platinum
-    3: heart_gold_soul_silver
+    8: heart_gold_soul_silver
+    10: diamond_pearl
+    12: platinum
 
   trainer_gender:
     0: male
@@ -456,6 +456,7 @@ types:
         type: u1
       - id: origin_game
         type: u1
+        enum: game
       - id: sinnoh_ribbon_set_3
         type: u2
       - id: sinnoh_ribbon_set_4
