@@ -1,6 +1,7 @@
 {
   "name": "pokesav-ds-gen4",
   "description": "Pokemon savefile reader for DS (Generation 4) games",
+  "version": "0.1.0",
   "author": "Raymond Hammarling",
   "license": "MIT",
   "main": "lib/index.js",
