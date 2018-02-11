@@ -2,9 +2,8 @@ import test from 'ava';
 
 import path from 'path';
 import fse from 'fs-extra';
-import kaitaiStruct from 'kaitai-struct';
-import PokesavDppt from '../formats-compiled/PokesavDppt';
 
+import { fromBuffer } from '../lib/index';
 import { asDate } from '../lib/util';
 
 test.beforeEach(async t => {
@@ -13,9 +12,7 @@ test.beforeEach(async t => {
     { encoding: null }
   );
 
-  t.context.data = new PokesavDppt(
-    new kaitaiStruct.KaitaiStream(savefile)
-  );
+  t.context.data = fromBuffer(savefile);
 
   t.context.currentGeneralBlock = t.context.data.generalBlockCurrent;
 });
