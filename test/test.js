@@ -3,8 +3,36 @@ import test from 'ava';
 import path from 'path';
 import fse from 'fs-extra';
 
-import { fromBuffer } from '../lib/index';
+import { PokesavDppt, fromBuffer } from '../lib/index';
 import { asDate } from '../lib/util';
+
+async function detectMacro(t, filePath, game) {
+  const savefile = await fse.readFile(
+    path.join(__dirname, filePath),
+    { encoding: null }
+  );
+
+  const data = fromBuffer(savefile);
+
+  t.is(PokesavDppt.Game[data.game], PokesavDppt.Game[game]);
+}
+
+test('detects diamond', detectMacro, '../testdata/diamond.sav', PokesavDppt.Game.DIAMOND_PEARL);
+test('detects platinum', detectMacro, '../testdata/platinum-first-save.sav', PokesavDppt.Game.PLATINUM);
+test('detects soul silver (first save)', detectMacro, '../testdata/soulsilver-first-save.sav', PokesavDppt.Game.HEART_GOLD_SOUL_SILVER);
+test('detects soul silver (after getting Cyndaquil)', detectMacro, '../testdata/soulsilver-cyndaquil-get.sav', PokesavDppt.Game.HEART_GOLD_SOUL_SILVER);
+
+test('expect sizes of blocks to match footers in Soul Silver save (first save)', async t => {
+  const savefile = await fse.readFile(
+    path.join(__dirname, '../testdata/soulsilver-first-save.sav'),
+    { encoding: null }
+  );
+
+  const data = fromBuffer(savefile);
+
+  t.is(data.hgssFirstGeneralBlockSize, 63016);
+  t.is(data.hgssFirstStorageBlockSize, 74512);
+});
 
 test.beforeEach(async t => {
   const savefile = await fse.readFile(
@@ -15,6 +43,13 @@ test.beforeEach(async t => {
   t.context.data = fromBuffer(savefile);
 
   t.context.currentGeneralBlock = t.context.data.generalBlockCurrent;
+});
+
+test('first and second blocks are not identical', t => {
+  const { checksum: checksum1 } = t.context.data.generalBlock1.footer;
+  const { checksum: checksum2 } = t.context.data.generalBlock2.footer;
+
+  t.not(checksum1, checksum2);
 });
 
 test('adventure started', t => {

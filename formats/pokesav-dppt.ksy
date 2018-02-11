@@ -5,30 +5,106 @@ meta:
   application: The Pokemon Company
 
 instances:
+  diamond_pearl_first_general_block_size:
+    pos: 0x40000 + 49408 - 20 + 0x08
+    type: u4
+  diamond_pearl_first_storage_block_size:
+    pos: 0x4C100 + 74208 - 20 + 0x08
+    type: u4
+
+  is_diamond_pearl:
+    value: diamond_pearl_first_general_block_size == 49408 and diamond_pearl_first_storage_block_size == 74208
+
+  platinum_first_general_block_size:
+    pos: 0x40000 + 53036 - 20 + 0x08
+    type: u4
+  platinum_first_storage_block_size:
+    pos: 0x4CF2C + 74212 - 20 + 0x08
+    type: u4
+
+  is_platinum:
+    value: platinum_first_general_block_size == 53036 and platinum_first_storage_block_size == 74212
+
+  hgss_first_general_block_size:
+    pos: 0x40000 + 63016 - 20 + 0x08
+    type: u4
+  hgss_first_storage_block_size:
+    pos: 0x4F700 + 74512 - 20 + 0x08
+    type: u4
+
+  is_hgss:
+    value: hgss_first_general_block_size == 63016 and hgss_first_storage_block_size == 74512
+
+  game:
+    value: >
+      is_diamond_pearl ? game::diamond_pearl : (
+        is_platinum ? game::platinum : (
+          is_hgss ? game::heart_gold_soul_silver : game::unknown
+        )
+      )
+    enum: game
+
+  general_block_offset:
+    value: '0x00000'
+
+  general_block_size:
+    value: 'is_platinum ? 53036 : (is_hgss ? 63016 : 49408)'
+
+  storage_block_offset:
+    value: 'is_platinum ? 0x0CF2C : (is_hgss ? 0x0F700 : 0x0C100)'
+
+  storage_block_size:
+    value: 'is_platinum ? 74212 : (is_hgss ? 74512 : 74208)'
+
   general_block_1:
-    pos: 0x00000
+    pos: 'general_block_offset'
+    size: 'general_block_size'
     type: general_block
   storage_block_1:
-    pos: 0x0C100
+    pos: 'storage_block_offset'
+    size: 'storage_block_size'
     type: storage_block
+
   general_block_2:
-    pos: 0x40000
+    pos: '0x40000 + general_block_offset'
+    size: 'general_block_size'
     type: general_block
   storage_block_2:
-    pos: 0x4C100
+    pos: '0x40000 + storage_block_offset'
+    size: 'storage_block_size'
     type: storage_block
 
+  has_backup:
+    value: general_block_1.footer.general_block_save_count != 0xFFFFFFFF
+
   general_block_current:
-    value: 'general_block_1.footer.general_block_save_count > general_block_2.footer.general_block_save_count ? general_block_1 : general_block_2'
+    value: >
+      (has_backup and (general_block_1.footer.general_block_save_count > general_block_2.footer.general_block_save_count))
+        ? general_block_1
+        : general_block_2
   general_block_backup:
-    value: 'general_block_1.footer.general_block_save_count > general_block_2.footer.general_block_save_count ? general_block_2 : general_block_1'
+    value: >
+      (has_backup and (general_block_1.footer.general_block_save_count > general_block_2.footer.general_block_save_count))
+        ? general_block_2
+        : general_block_1
 
   storage_block_current:
-    value: 'storage_block_1.footer.storage_block_save_count == general_block_current.footer.storage_block_save_count ? storage_block_1 : storage_block_2'
+    value: >
+      (has_backup and (storage_block_1.footer.storage_block_save_count == general_block_current.footer.storage_block_save_count))
+        ? storage_block_1
+        : storage_block_2
   storage_block_backup:
-    value: 'storage_block_1.footer.storage_block_save_count == general_block_current.footer.storage_block_save_count ? storage_block_2 : storage_block_1'
-
+    value: >
+      (has_backup and (storage_block_1.footer.storage_block_save_count == general_block_current.footer.storage_block_save_count))
+        ? storage_block_2
+        : storage_block_1
 enums:
+  game:
+    0: unknown
+    1: diamond_pearl
+    2: platinum
+    3: heart_gold_soul_silver
+
   trainer_gender:
     0: male
     1: female
@@ -146,7 +222,7 @@ types:
   general_block:
     seq:
       - id: junk
-        size: 49408 - 20
+        size: _parent.general_block_size - 20
       - id: footer
         type: general_and_storage_block_footer
 
@@ -468,7 +544,7 @@ types:
   storage_block:
     seq:
       - id: tmp_junk
-        size: 74208 - 20
+        size: _parent.storage_block_size - 20
       - id: footer
         type: general_and_storage_block_footer
 
