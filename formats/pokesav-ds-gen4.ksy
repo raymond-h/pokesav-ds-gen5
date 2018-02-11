@@ -467,9 +467,8 @@ types:
   pokemon_block_d:
     seq:
       - id: original_trainer_name
-        type: u2
-        repeat: expr
-        repeat-expr: 8
+        size: 2*8
+        process: pokesav.string_decode
       - id: date_egg_received
         size: 3
       - id: date_met

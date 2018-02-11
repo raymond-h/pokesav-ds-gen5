@@ -25,6 +25,7 @@ async function main() {
   console.log('Party:');
   for(const pkmn of current.partyPokemon) {
     console.log('  Nickname:', pkmn.base.blockC.nickname);
+    console.log('  OT name:', pkmn.base.blockD.originalTrainerName);
     console.log('  Origin game:', '0b' + pkmn.base.blockC.originGame.toString(2).padStart(8, '0'), `(${pkmn.base.blockC.originGame}, ${PokesavDsGen4.Game[pkmn.base.blockC.originGame]})`);
   }
   // console.log(`Started adventure at ${util.asDate(second.adventureStartTime)}, has ${second.partyPokemon.length} Pokemon in party. Checksum: ${second.footer.checksum.toString(16)}`);
