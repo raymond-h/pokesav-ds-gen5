@@ -283,8 +283,10 @@ types:
         type: evs
       - id: contest_values
         size: 6
-      - id: sinnoh_ribbons
-        size: 4
+      - id: sinnoh_ribbon_set_1
+        type: u2
+      - id: sinnoh_ribbon_set_2
+        type: u2
 
   evs:
     seq:
@@ -317,8 +319,10 @@ types:
         repeat-expr: 4
       - id: iv
         type: ivs
-      - id: hoenn_ribbons
-        size: 4
+      - id: hoenn_ribbon_set_1
+        type: u2
+      - id: hoenn_ribbon_set_2
+        type: u2
       - id: fateful_encounter
         type: b1
       - id: is_female
@@ -376,8 +380,10 @@ types:
         type: u1
       - id: origin_game
         type: u1
-      - id: sinnoh_ribbons
-        size: 4
+      - id: sinnoh_ribbon_set_3
+        type: u2
+      - id: sinnoh_ribbon_set_4
+        type: u2
       - id: unused_2
         size: 4
 
