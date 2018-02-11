@@ -18,7 +18,7 @@ test.beforeEach(async t => {
 });
 
 test('adventure started', t => {
-  const { adventureStartTime } = t.context.data.generalBlockCurrent;
+  const { adventureStartTime } = t.context.currentGeneralBlock;
   const startDate = asDate(adventureStartTime);
 
   t.is(startDate.getFullYear(), 2016);
