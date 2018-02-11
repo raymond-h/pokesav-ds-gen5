@@ -1,8 +1,8 @@
 meta:
-  id: pokesav_dppt
+  id: pokesav_ds_gen4
   endian: le
   file-extension: sav
-  application: The Pokemon Company
+  application: 'Pokémon Diamond/Pearl/Platinum/HeartGold/SoulSilver Version'
 
 instances:
   diamond_pearl_first_general_block_size:

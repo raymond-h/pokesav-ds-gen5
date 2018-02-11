@@ -3,7 +3,7 @@ import test from 'ava';
 import path from 'path';
 import fse from 'fs-extra';
 
-import { PokesavDppt, fromBuffer } from '../lib/index';
+import { PokesavDsGen4, fromBuffer } from '../lib/index';
 import { asDate } from '../lib/util';
 
 async function detectMacro(t, filePath, game) {
@@ -14,13 +14,13 @@ async function detectMacro(t, filePath, game) {
 
   const data = fromBuffer(savefile);
 
-  t.is(PokesavDppt.Game[data.game], PokesavDppt.Game[game]);
+  t.is(PokesavDsGen4.Game[data.game], PokesavDsGen4.Game[game]);
 }
 
-test('detects diamond', detectMacro, '../testdata/diamond.sav', PokesavDppt.Game.DIAMOND_PEARL);
-test('detects platinum', detectMacro, '../testdata/platinum-first-save.sav', PokesavDppt.Game.PLATINUM);
-test('detects soul silver (first save)', detectMacro, '../testdata/soulsilver-first-save.sav', PokesavDppt.Game.HEART_GOLD_SOUL_SILVER);
-test('detects soul silver (after getting Cyndaquil)', detectMacro, '../testdata/soulsilver-cyndaquil-get.sav', PokesavDppt.Game.HEART_GOLD_SOUL_SILVER);
+test('detects diamond', detectMacro, '../testdata/diamond.sav', PokesavDsGen4.Game.DIAMOND_PEARL);
+test('detects platinum', detectMacro, '../testdata/platinum-first-save.sav', PokesavDsGen4.Game.PLATINUM);
+test('detects soul silver (first save)', detectMacro, '../testdata/soulsilver-first-save.sav', PokesavDsGen4.Game.HEART_GOLD_SOUL_SILVER);
+test('detects soul silver (after getting Cyndaquil)', detectMacro, '../testdata/soulsilver-cyndaquil-get.sav', PokesavDsGen4.Game.HEART_GOLD_SOUL_SILVER);
 
 test('expect sizes of blocks to match footers in Soul Silver save (first save)', async t => {
   const savefile = await fse.readFile(

@@ -1,6 +1,6 @@
 {
-  "name": "pokesav-ds-temp-name",
-  "description": "Pokemon savefile reader for DPPt",
+  "name": "pokesav-ds-gen4",
+  "description": "Pokemon savefile reader for DS (Generation 4) games",
   "author": "Raymond Hammarling",
   "license": "MIT",
   "main": "lib/index.js",

@@ -1,5 +1,5 @@
 const fse = require('fs-extra');
-const { PokesavDppt, fromBuffer, util } = require('./lib');
+const { PokesavDsGen4, fromBuffer, util } = require('./lib');
 
 async function main() {
   // const buf = await fse.readFile('./testdata/diamond.sav', { encoding: null });
@@ -12,7 +12,7 @@ async function main() {
     isDiamondPearl: data.isDiamondPearl,
     isPlatinum: data.isPlatinum,
     isHgss: data.isHgss,
-    game: PokesavDppt.Game[data.game],
+    game: PokesavDsGen4.Game[data.game],
     hasBackup: data.hasBackup
   });
 
