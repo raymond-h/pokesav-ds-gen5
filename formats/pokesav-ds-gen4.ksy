@@ -355,6 +355,12 @@ types:
         value: personality_value % 25
         enum: nature
 
+      is_shiny:
+        value: >
+          ((block_a.original_trainer_id ^ block_a.original_trainer_secret_id) ^
+            (personality_value & 0xFFFF) ^
+            ((personality_value >> 16) & 0xFFFF)) < 8
+
   pokemon_data:
     seq:
       - id: block_a
