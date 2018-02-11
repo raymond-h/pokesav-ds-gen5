@@ -274,6 +274,10 @@ types:
         type: pokemon_in_party
         repeat: expr
         repeat-expr: party_pokemon_count
+      trainer_card_signature:
+        pos: '_parent.is_platinum ? 0x5BA8 : 0x5904'
+        size: 1536
+        process: pokesav.trainer_card_signature_reorder(192 / 8)
 
   playtime:
     seq:
