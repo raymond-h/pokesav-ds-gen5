@@ -24,6 +24,8 @@ function transformJs(src) {
 }
 
 async function main() {
+  console.log("Compiling format '../formats/pokesav-dppt.ksy'");
+
   const ksyData = await readKsyFile(
     path.join(__dirname, '../formats/pokesav-dppt.ksy')
   );

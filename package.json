@@ -9,6 +9,7 @@
     "test": "ava",
     "watch": "ava -w",
     "build:kaitai": "node scripts/build-kaitai-format.js",
+    "watch:kaitai": "onchange formats/ -- node scripts/build-kaitai-format.js",
     "prepublish": "run-s build:kaitai lint test"
   },
   "devDependencies": {
@@ -20,7 +21,8 @@
     "js-yaml": "^3.10.0",
     "jsverify": "^0.8.3",
     "kaitai-struct-compiler": "^0.8.0-SNAPSHOT.20180205.11616",
-    "npm-run-all": "^4.1.2"
+    "npm-run-all": "^4.1.2",
+    "onchange": "^3.3.0"
   },
   "dependencies": {
     "kaitai-struct": "^0.8.0-SNAPSHOT.2"
