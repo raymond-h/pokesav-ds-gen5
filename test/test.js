@@ -77,25 +77,6 @@ test('all pokemon in party belong to this savefile', t => {
 test('correct ivs and isEgg, isNicknamed flags', t => {
   const party = t.context.currentGeneralBlock.partyPokemon;
 
-  const expected = [
-    {
-      ivHp: 24,
-      ivAttack: 25,
-      ivDefense: 16,
-      ivSpeed: 6,
-      ivSpecialAttack: 27,
-      ivSpecialDefense: 2
-    },
-    {
-      ivHp: 28,
-      ivAttack: 2,
-      ivDefense: 13,
-      ivSpeed: 11,
-      ivSpecialAttack: 31,
-      ivSpecialDefense: 15
-    }
-  ];
-
   const actual = party.map(pkmn => pkmn.base).map(pkmn => ({
     ivHp: pkmn.data.blockB.iv.hp,
     ivAttack: pkmn.data.blockB.iv.attack,
@@ -105,7 +86,7 @@ test('correct ivs and isEgg, isNicknamed flags', t => {
     ivSpecialDefense: pkmn.data.blockB.iv.specialDefense
   }));
 
-  t.deepEqual(actual, expected, 'expected IVs to be correct');
+  t.snapshot(actual, 'expected IVs to be correct');
 });
 
 test('correct status flags', t => {
@@ -125,7 +106,7 @@ test('correct status flags', t => {
 test('correct level in battle stats', t => {
   const levels = t.context.currentGeneralBlock.partyPokemon.map(pkmn => pkmn.battleStats.level);
 
-  t.deepEqual(levels, [6, 4]);
+  t.deepEqual(levels, [6, 4, 3]);
 });
 
 test('correct party hp', t => {
