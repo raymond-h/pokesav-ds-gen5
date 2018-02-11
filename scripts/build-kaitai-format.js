@@ -4,6 +4,10 @@ const yaml = require('js-yaml');
 const falafel = require('falafel');
 const KaitaiStructCompiler = require('kaitai-struct-compiler');
 
+const glob = require('glob');
+const util = require('util');
+const globAsync = util.promisify(glob);
+
 async function readKsyFile(path) {
   const ksyStr = await fse.readFile(path, { encoding: 'utf8' });
 
@@ -26,33 +30,51 @@ function transformJs(src) {
   });
 }
 
-async function main() {
-  console.log("Compiling format '../formats/pokesav-dppt.ksy'");
-
-  const ksyData = await readKsyFile(
-    path.join(__dirname, '../formats/pokesav-dppt.ksy')
-  );
+async function compileFile(file, outputDir) {
+  const ksyData = await readKsyFile(file);
 
   const compiler = new KaitaiStructCompiler();
 
   const files = await compiler.compile('javascript', ksyData, null, false);
 
-  await fse.mkdirp(
-    path.join(__dirname, '../formats-compiled')
-  );
+  await fse.mkdirp(outputDir);
 
   await Promise.all(
     Object.keys(files).map(async file => {
       return await fse.writeFile(
-        path.join(__dirname, '../formats-compiled', file),
+        path.join(outputDir, file),
         transformJs(files[file]).toString(),
         { encoding: 'utf8' }
       );
     })
   );
 
-  console.log(`Compiled files: ${Object.keys(files).join(', ')}`);
+  return Object.keys(files);
 }
 
-main()
+async function main(argv) {
+  let files = argv._;
+
+  if(argv.source) {
+    const globFiles = await globAsync(argv.source);
+    files = files.concat(globFiles || []);
+  }
+
+  const fileArrays = await Promise.all(files.map(async file => {
+    console.log(`Compiling format '${file}'`);
+
+    return await compileFile(file, argv.outputDirectory);
+  }));
+
+  console.log(`Compiled files: ${[].concat.apply([], fileArrays).join(', ')}`);
+}
+
+main(
+  require('minimist')(process.argv.slice(2), {
+    alias: {
+      outputDirectory: ['d'],
+      source: ['s']
+    }
+  })
+)
   .catch(err => console.error(err));
