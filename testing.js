@@ -18,7 +18,9 @@ async function main() {
 
   const current = data.generalBlockCurrent;
 
+  console.log('Name', current.trainerName);
   console.log(`Started adventure at ${util.asDate(current.adventureStartTime)}, has ${current.partyPokemon.length} Pokemon in party. Checksum: ${current.footer.checksum.toString(16)}`);
+  console.log('Party:', current.partyPokemon.map(pkmn => pkmn.base.blockC.nickname).join('; '));
   // console.log(`Started adventure at ${util.asDate(second.adventureStartTime)}, has ${second.partyPokemon.length} Pokemon in party. Checksum: ${second.footer.checksum.toString(16)}`);
 }
 

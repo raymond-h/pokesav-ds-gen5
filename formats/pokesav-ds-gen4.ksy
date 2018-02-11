@@ -235,9 +235,8 @@ types:
         type: u4
       trainer_name:
         pos: 0x64
-        type: u2
-        repeat: expr
-        repeat-expr: 8
+        size: 2*8
+        process: pokesav.string_decode
       trainer_id:
         pos: 0x74
         type: u2
@@ -451,9 +450,8 @@ types:
   pokemon_block_c:
     seq:
       - id: nickname
-        type: u2
-        repeat: expr
-        repeat-expr: 11
+        size: 2*11
+        process: pokesav.string_decode
       - id: unused
         type: u1
       - id: origin_game
