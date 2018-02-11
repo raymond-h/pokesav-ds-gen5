@@ -213,8 +213,10 @@ types:
     seq:
       - id: base
         type: pokemon
-      - id: rest
+      - id: battle_stats
+        type: pokemon_battle_stats
         size: 100
+        process: pokesav.pokemon_decrypt(base.personality_value)
 
   pokemon:
     seq:
@@ -227,7 +229,7 @@ types:
       - id: data
         type: pokemon_data
         size: 128
-        process: pokesav.pokemon_decrypt(block_order, checksum)
+        process: pokesav.pokemon_decrypt_shuffle(block_order, checksum)
 
     instances:
       block_order:
@@ -418,6 +420,50 @@ types:
         enum: hgss_pokeball
       - id: unused
         type: u1
+
+  pokemon_battle_stats:
+    seq:
+      - id: asleep_turn_count
+        type: b3
+      - id: is_poisoned
+        type: b1
+      - id: is_burned
+        type: b1
+      - id: is_frozen
+        type: b1
+      - id: is_paralyzed
+        type: b1
+      - id: is_toxic
+        type: b1
+      - id: unknown
+        size: 3
+      - id: level
+        type: u1
+      - id: capsule_index
+        type: u1
+      - id: current_hp
+        type: u2
+      - id: stats
+        type: pokemon_stats
+      - id: unknown_2
+        size: 0x38
+      - id: seal_coordinates
+        size: 0x18
+
+  pokemon_stats:
+    seq:
+      - id: hp
+        type: u2
+      - id: attack
+        type: u2
+      - id: defense
+        type: u2
+      - id: speed
+        type: u2
+      - id: special_attack
+        type: u2
+      - id: special_defense
+        type: u2
 
   storage_block:
     seq:

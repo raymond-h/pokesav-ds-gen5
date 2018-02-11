@@ -15,10 +15,13 @@ function transformJs(src) {
     if(node.type === 'CallExpression' &&
       node.callee.type === 'Identifier' &&
       node.callee.name === 'require' &&
-      node.arguments[0].type === 'Literal' &&
-      node.arguments[0].value === 'pokesav/PokemonDecrypt') {
+      node.arguments[0].type === 'Literal') {
 
-      node.update("require('../lib/decrypt-process.js')");
+      const match = /^pokesav[\\/](.+)$/.exec(node.arguments[0].value);
+
+      if(match != null) {
+        node.update(`require('../lib/decrypt-process.js').${match[1]}`);
+      }
     }
   });
 }

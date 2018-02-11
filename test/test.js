@@ -74,3 +74,33 @@ test('correct ivs and isEgg, isNicknamed flags', t => {
 
   t.deepEqual(actual, expected, 'expected IVs to be correct');
 });
+
+test('correct status flags', t => {
+  const firstMon = t.context.currentGeneralBlock.partyPokemon[0];
+  const {
+    asleepTurnCount, isPoisoned, isBurned, isFrozen, isParalyzed, isToxic
+  } = firstMon.battleStats;
+
+  t.is(asleepTurnCount, 0);
+  t.false(isPoisoned);
+  t.false(isBurned);
+  t.false(isFrozen);
+  t.false(isParalyzed);
+  t.false(isToxic);
+});
+
+test('correct level in battle stats', t => {
+  const levels = t.context.currentGeneralBlock.partyPokemon.map(pkmn => pkmn.battleStats.level);
+
+  t.deepEqual(levels, [6, 4]);
+});
+
+test('correct party hp', t => {
+  const hps = t.context.currentGeneralBlock.partyPokemon
+    .map(pkmn => ({
+      current: pkmn.battleStats.currentHp,
+      max: pkmn.battleStats.stats.hp
+    }));
+
+  t.snapshot(hps);
+});
