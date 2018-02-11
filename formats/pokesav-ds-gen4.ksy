@@ -234,43 +234,43 @@ types:
         pos: 0x3C
         type: u4
       trainer_name:
-        pos: 0x64
+        pos: '_parent.is_platinum ? 0x68 : 0x64'
         size: 2*8
         process: pokesav.string_decode
       trainer_id:
-        pos: 0x74
+        pos: '_parent.is_platinum ? 0x78 : 0x74'
         type: u2
       secret_id:
-        pos: 0x76
+        pos: '_parent.is_platinum ? 0x7A : 0x76'
         type: u2
       money:
-        pos: 0x78
+        pos: '_parent.is_platinum ? 0x7C : 0x78'
         type: u4
       trainer_gender:
-        pos: 0x7C
+        pos: '_parent.is_platinum ? 0x80 : 0x7C'
         type: u1
         enum: trainer_gender
       country_of_origin:
-        pos: 0x7D
+        pos: '_parent.is_platinum ? 0x81 : 0x7D'
         type: u1
         enum: country_of_origin
       badge_flags:
-        pos: 0x7E
+        pos: '_parent.is_platinum ? 0x82 : 0x7E'
         type: u1
       multiplayer_avatar:
-        pos: 0x7F
+        pos: '_parent.is_platinum ? 0x83 : 0x7F'
         type: u1
         enum: multiplayer_avatar
       playtime:
-        pos: 0x86
+        pos: '_parent.is_platinum ? 0x8A : 0x86'
         type: playtime
       total_playtime_seconds:
         value: playtime.hours * 60 * 60 + playtime.minutes * 60 + playtime.seconds
       party_pokemon_count:
-        pos: 0x94
+        pos: '_parent.is_platinum ? 0x9C : 0x94'
         type: u1
       party_pokemon:
-        pos: 0x98
+        pos: '_parent.is_platinum ? 0xA0 : 0x98'
         type: pokemon_in_party
         repeat: expr
         repeat-expr: party_pokemon_count
