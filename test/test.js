@@ -18,7 +18,8 @@ async function detectMacro(t, filePath, game) {
 }
 
 test('detects diamond', detectMacro, '../testdata/diamond.sav', PokesavDsGen4.Game.DIAMOND_PEARL);
-test('detects platinum', detectMacro, '../testdata/platinum-first-save.sav', PokesavDsGen4.Game.PLATINUM);
+test('detects platinum (first save)', detectMacro, '../testdata/platinum-first-save.sav', PokesavDsGen4.Game.PLATINUM);
+test('detects platinum (after getting Piplup)', detectMacro, '../testdata/platinum-piplup-get.sav', PokesavDsGen4.Game.PLATINUM);
 test('detects soul silver (first save)', detectMacro, '../testdata/soulsilver-first-save.sav', PokesavDsGen4.Game.HEART_GOLD_SOUL_SILVER);
 test('detects soul silver (after getting Cyndaquil)', detectMacro, '../testdata/soulsilver-cyndaquil-get.sav', PokesavDsGen4.Game.HEART_GOLD_SOUL_SILVER);
 
