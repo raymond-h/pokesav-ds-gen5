@@ -441,14 +441,14 @@ types:
         type: u2
       - id: hoenn_ribbon_set_2
         type: u2
-      - id: fateful_encounter
+      - id: forme
+        type: b5
+      - id: is_genderless
         type: b1
       - id: is_female
         type: b1
-      - id: is_genderless
+      - id: fateful_encounter
         type: b1
-      - id: forme
-        type: b5
       - id: hgss_shiny_leaves
         type: u1
       - id: unused
