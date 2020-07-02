@@ -21,7 +21,7 @@
     "falafel": "^2.1.0",
     "fs-extra": "^5.0.0",
     "glob": "^7.1.2",
-    "js-yaml": "^3.10.0",
+    "js-yaml": "^3.13.1",
     "jsverify": "^0.8.3",
     "kaitai-struct-compiler": "^0.8.0-SNAPSHOT.20180205.11616",
     "minimist": "^1.2.0",
