@@ -11,7 +11,7 @@
     "watch": "ava -w",
     "build:kaitai": "node scripts/build-kaitai-format.js -d formats-compiled/ -s formats/**/*.ksy",
     "watch:kaitai": "onchange formats/ -- npm run build:kaitai",
-    "build": "run-s build:kaitai lint test",
+    "build": "npm run build:kaitai",
     "prepare": "npm run build"
   },
   "devDependencies": {
