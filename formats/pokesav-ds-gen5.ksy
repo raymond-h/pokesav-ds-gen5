@@ -1,109 +1,67 @@
 meta:
-  id: pokesav_ds_gen4
+  id: pokesav_ds_gen5
   endian: le
   file-extension: sav
-  application: 'Pokémon Diamond/Pearl/Platinum/HeartGold/SoulSilver Version'
+  application: 'Pokémon Black/White/Black 2/White 2 Version'
 
 instances:
-  diamond_pearl_first_general_block_size:
-    pos: 0x40000 + 49408 - 20 + 0x08
-    type: u4
-  diamond_pearl_first_storage_block_size:
-    pos: 0x4C100 + 74208 - 20 + 0x08
-    type: u4
+  black_white_checksum_block:
+    pos: 0x23F00
+    size: 0x8C
+    type: checksum_block
 
-  is_diamond_pearl:
-    value: diamond_pearl_first_general_block_size == 49408 and diamond_pearl_first_storage_block_size == 74208
+  black_2_white_2_checksum_block:
+    pos: 0x25F00
+    size: 0x93
+    type: checksum_block
 
-  platinum_first_general_block_size:
-    pos: 0x40000 + 53036 - 20 + 0x08
-    type: u4
-  platinum_first_storage_block_size:
-    pos: 0x4CF2C + 74212 - 20 + 0x08
-    type: u4
+  is_black_white:
+    value: party_pokemon_block.checksum == black_white_checksum_block.party_pokemon_checksum
 
-  is_platinum:
-    value: platinum_first_general_block_size == 53036 and platinum_first_storage_block_size == 74212
-
-  hgss_first_general_block_size:
-    pos: 0x40000 + 63016 - 20 + 0x08
-    type: u4
-  hgss_first_storage_block_size:
-    pos: 0x4F700 + 74512 - 20 + 0x08
-    type: u4
-
-  is_hgss:
-    value: hgss_first_general_block_size == 63016 and hgss_first_storage_block_size == 74512
+  is_black_2_white_2:
+    value: party_pokemon_block.checksum == black_2_white_2_checksum_block.party_pokemon_checksum
 
   game:
     value: >
-      is_diamond_pearl ? game::diamond_pearl : (
-        is_platinum ? game::platinum : (
-          is_hgss ? game::heart_gold_soul_silver : game::unknown
-        )
+      is_black_white ? game::black_white : (
+        is_black_2_white_2 ? game::black_2_white_2 : game::unknown
       )
+
     enum: game
 
-  general_block_offset:
-    value: '0x00000'
+  party_pokemon_block:
+    pos: 0x18E00
+    size: 0x538
+    type: party_pokemon_block
 
-  general_block_size:
-    value: 'is_platinum ? 53036 : (is_hgss ? 63016 : 49408)'
+  trainer_data_block:
+    pos: 0x19400
+    size: 'is_black_2_white_2 ? 0xB4 : 0x6C'
+    type: trainer_data_block
 
-  storage_block_offset:
-    value: 'is_platinum ? 0x0CF2C : (is_hgss ? 0x0F700 : 0x0C100)'
+  card_signature_badge_block:
+    pos: 0x1C100
+    size: 0x65C
+    type: card_signature_badge_block
 
-  storage_block_size:
-    value: 'is_platinum ? 74212 : (is_hgss ? 74512 : 74208)'
+  adventure_data_block:
+    pos: 0x1D900
+    size: 0x5C
+    type: adventure_data_block
 
-  general_block_1:
-    pos: 'general_block_offset'
-    size: 'general_block_size'
-    type: general_block
-  storage_block_1:
-    pos: 'storage_block_offset'
-    size: 'storage_block_size'
-    type: storage_block
+  extra_trainer_data_block:
+    pos: 'is_black_2_white_2 ? 0x21100 : 0x21200'
+    size: 0xEC
+    type: extra_trainer_data_block
 
-  general_block_2:
-    pos: '0x40000 + general_block_offset'
-    size: 'general_block_size'
-    type: general_block
-  storage_block_2:
-    pos: '0x40000 + storage_block_offset'
-    size: 'storage_block_size'
-    type: storage_block
-
-  has_backup:
-    value: general_block_1.footer.general_block_save_count != 0xFFFFFFFF
-
-  general_block_current:
-    value: >
-      (has_backup and (general_block_1.footer.general_block_save_count > general_block_2.footer.general_block_save_count))
-        ? general_block_1
-        : general_block_2
-  general_block_backup:
-    value: >
-      (has_backup and (general_block_1.footer.general_block_save_count > general_block_2.footer.general_block_save_count))
-        ? general_block_2
-        : general_block_1
-
-  storage_block_current:
-    value: >
-      (has_backup and (storage_block_1.footer.storage_block_save_count == general_block_current.footer.storage_block_save_count))
-        ? storage_block_1
-        : storage_block_2
-  storage_block_backup:
-    value: >
-      (has_backup and (storage_block_1.footer.storage_block_save_count == general_block_current.footer.storage_block_save_count))
-        ? storage_block_2
-        : storage_block_1
 enums:
   game:
     0: unknown
     8: heart_gold_soul_silver
     10: diamond_pearl
     12: platinum
+    20: black_white
+    22: black_2_white_2
 
   trainer_gender:
     0: male
@@ -120,22 +78,21 @@ enums:
 
   multiplayer_avatar:
     0x00: none
-    0x03: school_kid
-    0x05: bug_catcher
-    0x06: lass
-    0x07: battle_girl
-    0x0B: ace_trainer_male
-    0x0D: beauty
-    0x0E: ace_trainer_female
-    0x0F: roughneck
-    0x1F: pop_idol
-    0x23: social
-    0x25: cowgirl
-    0x2A: ruin_maniac
-    0x32: black_belt
-    0x3E: rich_boy
-    0x3F: lady
-    0x46: psychic
+    0x01: pkmn_trainer
+    0x02: pkmn_ranger_male
+    0x03: pkmn_breeder_male
+    0x04: scientist_male
+    0x05: hiker
+    0x06: roughneck
+    0x07: preschooler_male
+    0x08: lass
+    0x09: ace_trainer
+    0x0A: pkmn_ranger_female
+    0x0B: pkmn_breeder_female
+    0x0C: scientist_female
+    0x0D: parasol_lady
+    0x0E: nurse
+    0x0F: preschooler_female
 
   pokemon_block_order:
     0: abcd
@@ -245,66 +202,36 @@ enums:
     0xF3: competition_ball
     0xF4: park_ball
 
+
 types:
-  general_block:
+  trainer_data_block:
     seq:
       - id: junk
-        size: _parent.general_block_size - 20
-      - id: footer
-        type: general_and_storage_block_footer
-
-    instances:
-      adventure_start_time:
-        pos: 0x34
-        type: u4
-      league_champ_time:
-        pos: 0x3C
-        type: u4
-      trainer_name:
-        pos: '_parent.is_platinum ? 0x68 : 0x64'
+        size: 4
+      - id: trainer_name
         size: 2*8
         process: pokesav.string_decode
-      trainer_id:
-        pos: '_parent.is_platinum ? 0x78 : 0x74'
+      - id: trainer_id
         type: u2
-      secret_id:
-        pos: '_parent.is_platinum ? 0x7A : 0x76'
+      - id: secret_id
         type: u2
-      money:
-        pos: '_parent.is_platinum ? 0x7C : 0x78'
-        type: u4
-      trainer_gender:
-        pos: '_parent.is_platinum ? 0x80 : 0x7C'
-        type: u1
-        enum: trainer_gender
-      country_of_origin:
-        pos: '_parent.is_platinum ? 0x81 : 0x7D'
-        type: u1
-        enum: country_of_origin
-      badge_flags:
-        pos: '_parent.is_platinum ? 0x82 : 0x7E'
-        type: u1
+    instances:
       multiplayer_avatar:
-        pos: '_parent.is_platinum ? 0x83 : 0x7F'
+        pos: 0x20
         type: u1
         enum: multiplayer_avatar
+      trainer_gender:
+        pos: 0x21
+        type: u1
+        enum: trainer_gender
       playtime:
-        pos: '_parent.is_platinum ? 0x8A : 0x86'
+        pos: 0x24
         type: playtime
       total_playtime_seconds:
         value: playtime.hours * 60 * 60 + playtime.minutes * 60 + playtime.seconds
-      party_pokemon_count:
-        pos: '_parent.is_platinum ? 0x9C : 0x94'
-        type: u1
-      party_pokemon:
-        pos: '_parent.is_platinum ? 0xA0 : 0x98'
-        type: pokemon_in_party
-        repeat: expr
-        repeat-expr: party_pokemon_count
-      trainer_card_signature:
-        pos: '_parent.is_platinum ? 0x5BA8 : (_parent.is_hgss ? 0x4538 : 0x5904)'
-        size: 1536
-        process: pokesav.trainer_card_signature_reorder(192 / 8)
+      checksum:
+        pos: '_parent.is_black_2_white_2 ? 0xB2 : 0x6A'
+        type: u2
 
   playtime:
     seq:
@@ -315,13 +242,37 @@ types:
       - id: seconds
         type: u1
 
+  party_pokemon_block:
+    seq:
+      - id: junk
+        size: 4
+      - id: party_pokemon_count
+        type: u4
+      - id: party_pokemon
+        type: pokemon_in_party
+        repeat: expr
+        repeat-expr: 'party_pokemon_count < 6 ? party_pokemon_count : 6'
+    instances:
+      checksum:
+        pos: 0x536
+        type: u2
+
+  checksum_block:
+    instances:
+      party_pokemon_checksum:
+        pos: 0x34
+        type: u2
+      trainer_data_checksum:
+        pos: 0x36
+        type: u2
+
   pokemon_in_party:
     seq:
       - id: base
         type: pokemon
       - id: battle_stats
         type: pokemon_battle_stats
-        size: 100
+        size: 84
         process: pokesav.pokemon_decrypt(base.personality_value)
 
   pokemon:
@@ -350,10 +301,6 @@ types:
         value: data.block_c
       block_d:
         value: data.block_d
-
-      nature:
-        value: personality_value % 25
-        enum: nature
 
       is_shiny:
         value: >
@@ -449,10 +396,19 @@ types:
         type: b1
       - id: fateful_encounter
         type: b1
-      - id: hgss_shiny_leaves
+      - id: nature
         type: u1
+        enum: nature
       - id: unused
-        size: 2
+        type: b5
+      - id: ns_pokemon
+        type: b1
+      - id: has_hidden_ability
+        type: b1
+      - id: unused_2
+        type: b1
+      - id: unused_3
+        size: 1
       - id: platinum_egg_location
         type: u2
       - id: platinum_met_at_location
@@ -560,10 +516,10 @@ types:
         type: u2
       - id: stats
         type: pokemon_stats
-      - id: unknown_2
-        size: 0x38
-      - id: seal_coordinates
-        size: 0x18
+      - id: mail_message
+        size: 55
+      - id: unused
+        size: 8
 
   pokemon_stats:
     seq:
@@ -580,44 +536,29 @@ types:
       - id: special_defense
         type: u2
 
-  storage_block:
-    seq:
-      - id: tmp_junk
-        size: _parent.storage_block_size - 20
-      - id: footer
-        type: general_and_storage_block_footer
+  card_signature_badge_block:
+    instances:
+      trainer_card_signature:
+        pos: 0
+        size: 1536
+        process: pokesav.trainer_card_signature_reorder(192 / 8)
+      trainer_nature:
+        pos: 0x600
+        type: u1
+        enum: nature
 
-  general_and_storage_block_footer:
-    seq:
-      - id: storage_block_save_count
+  adventure_data_block:
+    instances:
+      adventure_start_time:
+        pos: 0x34
         type: u4
-      - id: general_block_save_count
+      league_champ_time:
+        pos: 0x3C
         type: u4
-      - id: block_size
-        type: u4
-      - id: runtime_junk
-        size: 6
-      - id: checksum
-        type: u2
 
-  hall_of_hame_footer:
+  extra_trainer_data_block:
     seq:
-      - id: save_id
+      - id: money
         type: u4
-      - id: save_index
-        type: u4
-      - id: runtime_junk
-        size: 8
-      - id: block_size
-        type: u4
-      - id: runtime_junk_2
-        size: 2
-      - id: checksum
-        type: u2
-
-  test_thing:
-    seq:
-      - id: first
-        type: b10
-      - id: second
-        type: b6
+      - id: badge_flags
+        type: u1

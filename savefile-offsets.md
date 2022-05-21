@@ -24,3 +24,8 @@ Length: 63016
 ## Big/storage block:
 Start: 0x0F700
 Length: 74512
+
+# Black/White:
+
+
+# Black 2/White 2:

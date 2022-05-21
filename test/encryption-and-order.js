@@ -3,7 +3,7 @@ import jsv from 'jsverify';
 import { inspect } from 'util';
 
 import { encryptBuffer, decryptBuffer, shuffleBlocks } from '../lib/encryption-and-order';
-import PokesavDsGen4 from '../formats-compiled/PokesavDsGen4';
+import PokesavDsGen5 from '../formats-compiled/PokesavDsGen5';
 
 const bufferArb = jsv.array(jsv.uint8)
   .smap(
@@ -31,8 +31,8 @@ const nonZeroUInt16Arb = jsv.suchthat(jsv.uint16, n => n !== 0);
 
 const nonDefaultOrderArb = jsv.integer(1, 23)
   .smap(
-    n => PokesavDsGen4.PokemonBlockOrder[n],
-    str => PokesavDsGen4.PokemonBlockOrder[str]
+    n => PokesavDsGen5.PokemonBlockOrder[n],
+    str => PokesavDsGen5.PokemonBlockOrder[str]
   );
 
 test('decrypt output should not equal input for non-zero key', t => {
