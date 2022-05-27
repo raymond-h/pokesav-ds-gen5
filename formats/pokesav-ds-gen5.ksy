@@ -78,7 +78,7 @@ enums:
 
   multiplayer_avatar:
     0x00: none
-    0x01: pkmn_trainer
+    0x01: ace_trainer_male
     0x02: pkmn_ranger_male
     0x03: pkmn_breeder_male
     0x04: scientist_male
@@ -86,7 +86,7 @@ enums:
     0x06: roughneck
     0x07: preschooler_male
     0x08: lass
-    0x09: ace_trainer
+    0x09: ace_trainer_female
     0x0A: pkmn_ranger_female
     0x0B: pkmn_breeder_female
     0x0C: scientist_female
