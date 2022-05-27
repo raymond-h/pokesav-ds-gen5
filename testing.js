@@ -27,8 +27,8 @@ async function main() {
   const cardSignatureBadgeBlock = data.cardSignatureBadgeBlock;
 
   console.log('Name', trainerData.trainerName);
-  // console.log(`Started adventure at ${util.asDate(current.adventureStartTime)}, has ${current.partyPokemon.length} Pokemon in party. Checksum: ${current.footer.checksum.toString(16)}`);
-  // console.log('Playtime:', current.playtime);
+  console.log(`Started adventure at ${util.asDate(data.adventureDataBlock.adventureStartTime)}, has ${partyPokemonData.partyPokemon.length} Pokemon in party.`);
+  console.log('Playtime:', data.trainerDataBlock.playtime);
   console.log('Party:');
   for(const pkmn of partyPokemonData.partyPokemon) {
     console.log('  Nickname:', pkmn.base.blockC.nickname);
