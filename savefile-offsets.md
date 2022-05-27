@@ -24,3 +24,21 @@ Length: 63016
 ## Big/storage block:
 Start: 0x0F700
 Length: 74512
+
+# Black/White:
+## Party Pokemon Block:
+Start: 0x18E00
+Length: 1332
+
+## Trainer Data Block:
+Start: 19400
+Length: 104
+
+# Black 2/White 2:
+## Party Pokemon Block:
+Start: 0x18E00
+Length: 1332
+
+## Trainer Data Block
+Start: 19400
+Length: 176

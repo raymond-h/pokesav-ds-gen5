@@ -3,7 +3,7 @@ import test from 'ava';
 import path from 'path';
 import fse from 'fs-extra';
 
-import { PokesavDsGen4, fromBuffer } from '../lib/index';
+import { PokesavDsGen5, fromBuffer } from '../lib/index';
 import { asDate } from '../lib/util';
 
 async function detectMacro(t, filePath, game) {
@@ -14,58 +14,33 @@ async function detectMacro(t, filePath, game) {
 
   const data = fromBuffer(savefile);
 
-  t.is(PokesavDsGen4.Game[data.game], PokesavDsGen4.Game[game]);
+  t.is(PokesavDsGen5.Game[data.game], PokesavDsGen5.Game[game]);
 }
 
-test('detects diamond', detectMacro, '../testdata/diamond.sav', PokesavDsGen4.Game.DIAMOND_PEARL);
-test('detects platinum (first save)', detectMacro, '../testdata/platinum-first-save.sav', PokesavDsGen4.Game.PLATINUM);
-test('detects platinum (after getting Piplup)', detectMacro, '../testdata/platinum-piplup-get.sav', PokesavDsGen4.Game.PLATINUM);
-test('detects soul silver (first save)', detectMacro, '../testdata/soulsilver-first-save.sav', PokesavDsGen4.Game.HEART_GOLD_SOUL_SILVER);
-test('detects soul silver (after getting Cyndaquil)', detectMacro, '../testdata/soulsilver-cyndaquil-get.sav', PokesavDsGen4.Game.HEART_GOLD_SOUL_SILVER);
-
-test('expect sizes of blocks to match footers in Soul Silver save (first save)', async t => {
-  const savefile = await fse.readFile(
-    path.join(__dirname, '../testdata/soulsilver-first-save.sav'),
-    { encoding: null }
-  );
-
-  const data = fromBuffer(savefile);
-
-  t.is(data.hgssFirstGeneralBlockSize, 63016);
-  t.is(data.hgssFirstStorageBlockSize, 74512);
-});
+test('detects black (first save)', detectMacro, '../testdata/black-oshawott-get.sav', PokesavDsGen5.Game.BLACK_WHITE);
+test('detects white 2 (first save)', detectMacro, '../testdata/white-2-snivy-get.sav', PokesavDsGen5.Game.BLACK_2_WHITE_2);
 
 test.beforeEach(async t => {
   const savefile = await fse.readFile(
-    path.join(__dirname, '../testdata/diamond.sav'),
+    path.join(__dirname, '../testdata/black-oshawott-get.sav'),
     { encoding: null }
   );
 
   t.context.data = fromBuffer(savefile);
-
-  t.context.currentGeneralBlock = t.context.data.generalBlockCurrent;
-});
-
-test('first and second blocks are not identical', t => {
-  const { checksum: checksum1 } = t.context.data.generalBlock1.footer;
-  const { checksum: checksum2 } = t.context.data.generalBlock2.footer;
-
-  t.not(checksum1, checksum2);
 });
 
 test('adventure started', t => {
-  const { adventureStartTime } = t.context.currentGeneralBlock;
+  const { adventureStartTime } = t.context.data.adventureDataBlock;
   const startDate = asDate(adventureStartTime);
 
-  t.is(startDate.getFullYear(), 2016);
+  t.is(startDate.getFullYear(), 2022);
 });
 
 test('all pokemon in party belong to this savefile', t => {
-  const trainerId = t.context.currentGeneralBlock.trainerId;
-  const secretId = t.context.currentGeneralBlock.secretId;
+  const { trainerId, secretId } = t.context.data.trainerDataBlock;
 
   let i = 0;
-  for(const { data } of t.context.currentGeneralBlock.partyPokemon.map(pkmn => pkmn.base)) {
+  for(const { data } of t.context.data.partyPokemonBlock.partyPokemon.map(pkmn => pkmn.base)) {
     const originalTrainerId = data.blockA.originalTrainerId;
     const originalTrainerSecretId = data.blockA.originalTrainerSecretId;
 
@@ -75,7 +50,7 @@ test('all pokemon in party belong to this savefile', t => {
 });
 
 test('correct ivs and isEgg, isNicknamed flags', t => {
-  const party = t.context.currentGeneralBlock.partyPokemon;
+  const party = t.context.data.partyPokemonBlock.partyPokemon;
 
   const actual = party.map(pkmn => pkmn.base).map(pkmn => ({
     ivHp: pkmn.data.blockB.iv.hp,
@@ -90,7 +65,7 @@ test('correct ivs and isEgg, isNicknamed flags', t => {
 });
 
 test('correct status flags', t => {
-  const firstMon = t.context.currentGeneralBlock.partyPokemon[0];
+  const firstMon = t.context.data.partyPokemonBlock.partyPokemon[0];
   const {
     asleepTurnCount, isPoisoned, isBurned, isFrozen, isParalyzed, isToxic
   } = firstMon.battleStats;
@@ -104,13 +79,13 @@ test('correct status flags', t => {
 });
 
 test('correct level in battle stats', t => {
-  const levels = t.context.currentGeneralBlock.partyPokemon.map(pkmn => pkmn.battleStats.level);
+  const levels = t.context.data.partyPokemonBlock.partyPokemon.map(pkmn => pkmn.battleStats.level);
 
-  t.deepEqual(levels, [6, 4, 3]);
+  t.deepEqual(levels, [6, 3, 3, 2]);
 });
 
 test('correct party hp', t => {
-  const hps = t.context.currentGeneralBlock.partyPokemon
+  const hps = t.context.data.partyPokemonBlock.partyPokemon
     .map(pkmn => ({
       current: pkmn.battleStats.currentHp,
       max: pkmn.battleStats.stats.hp

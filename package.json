@@ -1,6 +1,6 @@
 {
-  "name": "pokesav-ds-gen4",
-  "description": "Pokemon savefile reader for DS (Generation 4) games",
+  "name": "pokesav-ds-gen5",
+  "description": "Pokemon savefile reader for DS (Generation 5) games",
   "version": "0.1.0",
   "author": "Raymond Hammarling",
   "license": "MIT",
@@ -9,6 +9,7 @@
     "lint": "eslint lib/ test/",
     "test": "ava",
     "watch": "ava -w",
+    "update-test-snapshots": "ava --update-snapshots",
     "build:kaitai": "node scripts/build-kaitai-format.js -d formats-compiled/ -s formats/**/*.ksy",
     "watch:kaitai": "onchange formats/ -- npm run build:kaitai",
     "build": "npm run build:kaitai",
@@ -29,11 +30,12 @@
     "onchange": "^3.3.0"
   },
   "dependencies": {
+    "crc": "^4.1.1",
     "kaitai-struct": "^0.8.0-SNAPSHOT.2",
-    "lodash.takewhile": "^4.6.0"
+    "lodash.chunk": "^4.2.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/raymond-h/pokesav-ds-gen4"
+    "url": "https://github.com/raymond-h/pokesav-ds-gen5"
   }
 }
