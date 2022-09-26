@@ -1,6 +1,13 @@
 const fse = require('fs-extra');
 const { PokesavDsGen5, fromBuffer, util } = require('./lib');
 
+function leftPad(str, padding, width) {
+  while(str.length < width) {
+    str = padding + str;
+  }
+  return str.slice(-width);
+}
+
 async function main() {
   // const file = './testdata/diamond.sav'
   // const file = './testdata/platinum-first-save.sav'
@@ -9,11 +16,11 @@ async function main() {
   // const file = './testdata/soulsilver-cyndaquil-get.sav'
   // const file = './testdata/black-first-save.sav'
   // const file = './testdata/white-2-first-save.sav'
-  const file = './testdata/black-oshawott-get.sav'
+  const file = './testdata/black-oshawott-get.sav';
 
   const buf = await fse.readFile(file, { encoding: null });
 
-  console.log(`Reading ${file}`)
+  console.log(`Reading ${file}`);
   const data = fromBuffer(buf);
 
   console.log({
@@ -31,7 +38,9 @@ async function main() {
   console.log('Playtime:', data.trainerDataBlock.playtime);
   console.log('Party:');
   for(const pkmn of partyPokemonData.partyPokemon) {
-    console.log('  Nickname:', pkmn.base.blockC.nickname);
+    console.log('- Nickname:', pkmn.base.blockC.nickname);
+    console.log('  Personality value:', leftPad(pkmn.base.personalityValue.toString(16), '0', 2*4));
+    // console.log('  Personality value:', pkmn.base.personalityValue);
     console.log('  OT name:', pkmn.base.blockD.originalTrainerName);
     console.log('  Origin game:', '0b' + pkmn.base.blockC.originGame.toString(2).padStart(8, '0'), `(${pkmn.base.blockC.originGame}, ${PokesavDsGen5.Game[pkmn.base.blockC.originGame]})`);
   }

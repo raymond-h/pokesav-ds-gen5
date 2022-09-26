@@ -40,7 +40,7 @@ test('all pokemon in party belong to this savefile', t => {
   const { trainerId, secretId } = t.context.data.trainerDataBlock;
 
   let i = 0;
-  for(const { data } of t.context.data.partyPokemonBlock.partyPokemon.map(pkmn => pkmn.base)) {
+  for (const { data } of t.context.data.partyPokemonBlock.partyPokemon.map(pkmn => pkmn.base)) {
     const originalTrainerId = data.blockA.originalTrainerId;
     const originalTrainerSecretId = data.blockA.originalTrainerSecretId;
 
@@ -93,3 +93,86 @@ test('correct party hp', t => {
 
   t.snapshot(hps);
 });
+
+function flagListToIndexList(flagList) {
+  let index = 0;
+  const indices = [];
+  for (const isTrue of flagList) {
+    if (isTrue) {
+      indices.push(index);
+    }
+    index++;
+  }
+  return indices;
+}
+
+const pokedexSpeciesFlagsMacro = (t, flagGroup) => {
+  const pokedexData = t.context.data.pokedexBlock;
+
+  t.snapshot(
+    flagListToIndexList(pokedexData.species[flagGroup].species)
+      .map(index => index + 1) // +1 because bitflag index = species ID - 1
+  );
+};
+
+const speciesFlagGroups = [
+  'caught',
+  'seenMaleGenderless',
+  'seenFemale',
+  'seenMaleGenderlessShiny',
+  'seenFemaleShiny',
+  'displayMaleGenderless',
+  'displayFemale',
+  'displayMaleGenderlessShiny',
+  'displayFemaleShiny',
+];
+
+for (const flagGroup of speciesFlagGroups) {
+  test(`pokedex species flags: ${flagGroup}`, pokedexSpeciesFlagsMacro, flagGroup);
+}
+
+const pokedexFormFlagsMacro = (t, flagGroup) => {
+  const pokedexData = t.context.data.pokedexBlock;
+
+  const subkeys = Object.keys(pokedexData.forms[flagGroup]).filter(k => !k.startsWith('_'));
+
+  const formLists = {};
+  for (const subkey of subkeys) {
+    formLists[subkey] = flagListToIndexList(pokedexData.forms[flagGroup][subkey]);
+  }
+  t.snapshot(formLists);
+};
+
+const formFlagGroups = [
+  'seen',
+  'seenShiny',
+  'display',
+  'displayShiny',
+];
+
+for (const flagGroup of formFlagGroups) {
+  test(`pokedex form flags: ${flagGroup}`, pokedexFormFlagsMacro, flagGroup);
+}
+
+const pokedexLanguageFlagsMacro = (t, language) => {
+  const pokedexData = t.context.data.pokedexBlock;
+
+  t.snapshot(
+    flagListToIndexList(pokedexData.languages.species.map(s => s[language]))
+      .map(index => index + 1) // +1 because bitflag index = species ID - 1
+  );
+};
+
+const languages = [
+  'japanese',
+  'english',
+  'french',
+  'italian',
+  'german',
+  'spanish',
+  'korean',
+];
+
+for (const language of languages) {
+  test(`pokedex language flags: ${language}`, pokedexLanguageFlagsMacro, language);
+}

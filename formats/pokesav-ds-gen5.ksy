@@ -21,6 +21,9 @@ instances:
   is_black_2_white_2:
     value: party_pokemon_block.checksum == black_2_white_2_checksum_block.party_pokemon_checksum
 
+  checksum_block:
+    value: 'is_black_2_white_2 ? black_2_white_2_checksum_block : black_white_checksum_block'
+
   game:
     value: >
       is_black_white ? game::black_white : (
@@ -53,6 +56,11 @@ instances:
     pos: 'is_black_2_white_2 ? 0x21100 : 0x21200'
     size: 0xEC
     type: extra_trainer_data_block
+
+  pokedex_block:
+    pos: 'is_black_2_white_2 ? 0x21400 : 0x21600'
+    size: 'is_black_2_white_2 ? 0x04E0 : 0x4D8'
+    type: pokedex_block
 
 enums:
   game:
@@ -264,6 +272,12 @@ types:
         type: u2
       trainer_data_checksum:
         pos: 0x36
+        type: u2
+      pokedex_checksum:
+        pos: '_root.is_black_2_white_2 ? 0x6C : 0x6E'
+        type: u2
+      checksum:
+        pos: '_root.is_black_2_white_2 ? 0xA2 : 0x9A'
         type: u2
 
   pokemon_in_party:
@@ -562,3 +576,188 @@ types:
         type: u4
       - id: badge_flags
         type: u1
+
+  pokedex_block:
+    seq:
+      - id: junk_1
+        size: 8
+      - id: species
+        type: species_bitfield_group
+      - id: forms
+        type: forms_bitfield_group
+      - id: languages
+        type: species_language_bitfield
+      - id: junk_2
+        size: 6
+      - id: checksum
+        type: u2
+
+    types:
+      species_bitfield_group:
+        seq:
+          - id: caught
+            type: species_bitfield
+            size: 0x54
+          - id: seen_male_genderless
+            type: species_bitfield
+            size: 0x54
+          - id: seen_female
+            type: species_bitfield
+            size: 0x54
+          - id: seen_male_genderless_shiny
+            type: species_bitfield
+            size: 0x54
+          - id: seen_female_shiny
+            type: species_bitfield
+            size: 0x54
+          - id: display_male_genderless
+            type: species_bitfield
+            size: 0x54
+          - id: display_female
+            type: species_bitfield
+            size: 0x54
+          - id: display_male_genderless_shiny
+            type: species_bitfield
+            size: 0x54
+          - id: display_female_shiny
+            type: species_bitfield
+            size: 0x54
+
+      species_bitfield:
+        seq:
+          - id: species
+            type: b1le
+            repeat: eos
+
+      forms_bitfield_group:
+        seq:
+          - id: seen
+            type: forms_bitfield
+            size: '_root.is_black_2_white_2 ? 0xB : 0x9'
+          - id: seen_shiny
+            type: forms_bitfield
+            size: '_root.is_black_2_white_2 ? 0xB : 0x9'
+          - id: display
+            type: forms_bitfield
+            size: '_root.is_black_2_white_2 ? 0xB : 0x9'
+          - id: display_shiny
+            type: forms_bitfield
+            size: '_root.is_black_2_white_2 ? 0xB : 0x9'
+
+      forms_bitfield:
+        seq:
+          - id: unown
+            type: b1le
+            repeat: expr
+            repeat-expr: 28
+          - id: deoxys
+            type: b1le
+            repeat: expr
+            repeat-expr: 4
+          - id: shaymin
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+          - id: giratina
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+          - id: rotom
+            type: b1le
+            repeat: expr
+            repeat-expr: 6
+          - id: shellos
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+          - id: gastrodon
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+          - id: burmy
+            type: b1le
+            repeat: expr
+            repeat-expr: 3
+          - id: wormadam
+            type: b1le
+            repeat: expr
+            repeat-expr: 3
+          - id: castform
+            type: b1le
+            repeat: expr
+            repeat-expr: 4
+          - id: cherrim
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+          - id: deerling
+            type: b1le
+            repeat: expr
+            repeat-expr: 4
+          - id: sawsbuck
+            type: b1le
+            repeat: expr
+            repeat-expr: 4
+          - id: meloetta
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+          - id: darmanitan
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+          - id: basculin
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+
+          # B2W2-only forms
+          - id: kyurem
+            type: b1le
+            repeat: expr
+            repeat-expr: 3
+            if: _root.is_black_2_white_2
+          - id: keldeo
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+            if: _root.is_black_2_white_2
+          - id: thundurus
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+            if: _root.is_black_2_white_2
+          - id: tornadus
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+            if: _root.is_black_2_white_2
+          - id: landorus
+            type: b1le
+            repeat: expr
+            repeat-expr: 2
+            if: _root.is_black_2_white_2
+
+      species_language_bitfield:
+        seq:
+          - id: species
+            type: language_bitfield
+            repeat: expr
+            repeat-expr: 493
+
+      language_bitfield:
+        seq:
+          - id: japanese
+            type: b1le
+          - id: english
+            type: b1le
+          - id: french
+            type: b1le
+          - id: italian
+            type: b1le
+          - id: german
+            type: b1le
+          - id: spanish
+            type: b1le
+          - id: korean
+            type: b1le
