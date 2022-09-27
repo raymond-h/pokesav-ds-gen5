@@ -1,0 +1,31 @@
+{
+  "PokesavDsGen5": {
+    "isBlackWhite": "boolean",
+    "isBlack2White2": "boolean",
+    "checksumBlock": "PokesavDsGen5.ChecksumBlock"
+  },
+  "TrainerDataBlock": {
+    "totalPlaytimeSeconds": "number"
+  },
+  "Pokemon": {
+    "blockA": "Pokemon[\"data\"][\"blockA\"]",
+    "blockB": "Pokemon[\"data\"][\"blockB\"]",
+    "blockC": "Pokemon[\"data\"][\"blockC\"]",
+    "blockD": "Pokemon[\"data\"][\"blockD\"]",
+    "isShiny": "boolean"
+  },
+  "PokemonBlockB": {
+    "isEgg": "PokemonBlockB[\"iv\"][\"isEgg\"]",
+    "isNicknamed": "PokemonBlockB[\"iv\"][\"isNicknamed\"]"
+  },
+  "Ivs": {
+    "hp": "number",
+    "attack": "number",
+    "defense": "number",
+    "speed": "number",
+    "specialAttack": "number",
+    "specialDefense": "number",
+    "isEgg": "boolean",
+    "isNicknamed": "boolean"
+  }
+}
