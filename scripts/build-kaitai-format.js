@@ -1,5 +1,5 @@
 const path = require('path');
-const assert = require('assert/strict');
+const assert = require('assert');
 const fse = require('fs-extra');
 const yaml = require('js-yaml');
 const falafel = require('falafel');
@@ -16,7 +16,7 @@ async function readKsyFile(path) {
 }
 
 function findInIfElseIfChainSyntaxTree(node, pred) {
-  assert.equal(node.type, 'IfStatement');
+  assert.strictEqual(node.type, 'IfStatement');
 
   if (pred(node.consequent)) {
     return node.consequent;
