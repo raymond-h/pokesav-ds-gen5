@@ -1,8 +1,8 @@
-const fse = require('fs-extra');
-const { PokesavDsGen5, fromBuffer, util } = require('./lib');
+import fse from 'fs-extra';
+import { PokesavDsGen5, fromBuffer, util } from './lib/index.js';
 
 function leftPad(str, padding, width) {
-  while(str.length < width) {
+  while (str.length < width) {
     str = padding + str;
   }
   return str.slice(-width);
@@ -37,9 +37,9 @@ async function main() {
   console.log(`Started adventure at ${util.asDate(data.adventureDataBlock.adventureStartTime)}, has ${partyPokemonData.partyPokemon.length} Pokemon in party.`);
   console.log('Playtime:', data.trainerDataBlock.playtime);
   console.log('Party:');
-  for(const pkmn of partyPokemonData.partyPokemon) {
+  for (const pkmn of partyPokemonData.partyPokemon) {
     console.log('- Nickname:', pkmn.base.blockC.nickname);
-    console.log('  Personality value:', leftPad(pkmn.base.personalityValue.toString(16), '0', 2*4));
+    console.log('  Personality value:', leftPad(pkmn.base.personalityValue.toString(16), '0', 2 * 4));
     // console.log('  Personality value:', pkmn.base.personalityValue);
     console.log('  OT name:', pkmn.base.blockD.originalTrainerName);
     console.log('  Origin game:', '0b' + pkmn.base.blockC.originGame.toString(2).padStart(8, '0'), `(${pkmn.base.blockC.originGame}, ${PokesavDsGen5.Game[pkmn.base.blockC.originGame]})`);

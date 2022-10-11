@@ -4,18 +4,26 @@
   "version": "0.1.0",
   "author": "Raymond Hammarling",
   "license": "MIT",
-  "main": "lib/index.js",
+  "main": "./dist/index.js",
+  "module": "./lib/index.js",
+  "type": "module",
+  "exports": {
+    "import": "./lib/index.js",
+    "require": "./dist/index.js"
+  },
   "scripts": {
-    "lint": "eslint lib/**/*.js test/**/*.mjs",
+    "lint": "eslint lib/**/*.js test/**/*.js",
     "test": "ava",
     "watch": "ava -w",
     "update-test-snapshots": "ava --update-snapshots",
     "build:kaitai": "node scripts/build-kaitai-format.js -d formats-compiled/ -s formats/**/*.ksy",
     "watch:kaitai": "onchange formats/ -- npm run build:kaitai",
-    "build": "npm run build:kaitai",
-    "prepare": "npm run build"
+    "build": "npm run build:kaitai && npm run build:rollup",
+    "prepare": "npm run build",
+    "build:rollup": "rollup -c"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^23.0.0",
     "ava": "^4.3.3",
     "camelcase": "^6.3.0",
     "eslint": "^8.25.0",
@@ -29,7 +37,8 @@
     "lodash": "^4.2.0",
     "minimist": "^1.2.3",
     "npm-run-all": "^4.1.2",
-    "onchange": "^3.3.0"
+    "onchange": "^3.3.0",
+    "rollup": "^2.79.1"
   },
   "dependencies": {
     "crc": "^4.1.1",

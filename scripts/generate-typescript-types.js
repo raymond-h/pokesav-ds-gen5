@@ -1,7 +1,11 @@
-const fse = require('fs-extra');
-const path = require('path');
-const yaml = require('js-yaml');
-const camelCase = require('camelcase');
+import fse from 'fs-extra';
+import { resolve } from 'path';
+import yaml from 'js-yaml';
+import camelCase from 'camelcase';
+import minimist from 'minimist';
+
+import * as url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 async function readKsyFile(path) {
   const ksyStr = await fse.readFile(path, { encoding: 'utf8' });
@@ -152,7 +156,7 @@ function convertTypescriptJsonToText(tsObj) {
 }
 
 async function generateTypescriptTypesFromFile(file) {
-  const tsTypeOverrides = await fse.readJson(path.resolve(__dirname, 'typescript-types-override.json'));
+  const tsTypeOverrides = await fse.readJson(resolve(__dirname, 'typescript-types-override.json'));
   const ksyData = await readKsyFile(file);
 
   // console.log(ksyData);
@@ -178,6 +182,6 @@ async function main() {
 }
 
 main(
-  require('minimist')(process.argv.slice(2), {})
+  minimist(process.argv.slice(2), {})
 )
   .catch(err => console.error(err));

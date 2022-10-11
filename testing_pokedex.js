@@ -1,6 +1,6 @@
-const fse = require('fs-extra');
-const _ = require('lodash');
-const { PokesavDsGen5, fromBuffer } = require('./lib');
+import fse from 'fs-extra';
+import _ from 'lodash';
+import { PokesavDsGen5, fromBuffer } from './lib/index.js';
 
 function speciesFlagsToList(speciesFlags) {
   let speciesId = 1;

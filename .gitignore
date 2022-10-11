@@ -1,5 +1,6 @@
 node_modules/
 formats-compiled/
+dist/
 
 *.log
 signature.*

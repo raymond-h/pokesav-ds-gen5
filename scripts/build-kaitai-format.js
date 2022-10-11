@@ -1,13 +1,15 @@
-const path = require('path');
-const assert = require('assert');
-const fse = require('fs-extra');
-const yaml = require('js-yaml');
-const falafel = require('falafel');
-const KaitaiStructCompiler = require('kaitai-struct-compiler');
+import { join } from 'path';
+import fse from 'fs-extra';
+import yaml from 'js-yaml';
+import falafel from 'falafel';
+import KaitaiStructCompiler from 'kaitai-struct-compiler';
+import minimist from 'minimist';
 
-const glob = require('glob');
-const util = require('util');
-const globAsync = util.promisify(glob);
+import glob from 'glob';
+import { promisify } from 'util';
+const globAsync = promisify(glob);
+
+import { umdToEsm } from './helpers/convert-umd-to-esm.js';
 
 async function readKsyFile(path) {
   const ksyStr = await fse.readFile(path, { encoding: 'utf8' });
@@ -15,50 +17,36 @@ async function readKsyFile(path) {
   return yaml.safeLoad(ksyStr, { filename: path });
 }
 
-function findInIfElseIfChainSyntaxTree(node, pred) {
-  assert.strictEqual(node.type, 'IfStatement');
+function fixProjectSpecificIssues(src) {
+  const isStaticCommonJsRequireCall = (node) => node.type === 'CallExpression' &&
+    node.callee.type === 'Identifier' &&
+    node.callee.name === 'require' &&
+    node.arguments[0].type === 'Literal';
 
-  if (pred(node.consequent)) {
-    return node.consequent;
-  }
-  else if (node.alternate != null && node.alternate.type === 'IfStatement') {
-    return findInIfElseIfChainSyntaxTree(node.alternate, pred);
-  }
-  else if (node.alternate != null) {
-    return pred(node.alternate) ? node.alternate : null;
-  }
-}
+  const isIife = (node) => node.type === 'CallExpression' && node.callee.type === 'FunctionExpression';
 
-function transformJs(src) {
   return falafel(src, node => {
-    if (node.type === 'CallExpression' &&
-      node.callee.type === 'Identifier' &&
-      node.callee.name === 'require' &&
-      node.arguments[0].type === 'Literal') {
-
+    if (isStaticCommonJsRequireCall(node)) {
       const match = /^pokesav[\\/](.+)$/.exec(node.arguments[0].value);
 
       if (match != null) {
         node.update(`require('../lib/decrypt-process.js').${match[1]}`);
       }
-    }
-
-    if (node.type === 'FunctionExpression' &&
-      node.id === null &&
-      node.params.length === 2 &&
-      node.params[0].name === 'root' &&
-      node.params[1].name === 'factory') {
-
-      const cjsBlock = findInIfElseIfChainSyntaxTree(node.body.body[0], (node) => {
-        const expr = node.body[0].expression;
-        return expr.type === 'AssignmentExpression' && expr.operator === '=' && expr.left.source() === 'module.exports';
-      });
-
-      if (cjsBlock != null) {
-        node.body.body[0].update(cjsBlock.body[0].source());
+      else if (node.arguments[0].value === 'kaitai-struct/KaitaiStream') {
+        node.update("require('kaitai-struct').KaitaiStream");
       }
     }
-  });
+
+    // mark all IIFEs as pure, so ESM bundlers can tree shake them
+    // mostly useful for the outermost class representing the KSY file as a whole
+    if (isIife(node)) {
+      node.update(`/*#__PURE__*/ ${node.source()}`);
+    }
+  }).toString();
+}
+
+function transformJs(src) {
+  return umdToEsm(fixProjectSpecificIssues(src));
 }
 
 async function compileFile(file, outputDir) {
@@ -73,8 +61,8 @@ async function compileFile(file, outputDir) {
   await Promise.all(
     Object.keys(files).map(async file => {
       return await fse.writeFile(
-        path.join(outputDir, file),
-        transformJs(files[file]).toString(),
+        join(outputDir, file),
+        transformJs(files[file]),
         { encoding: 'utf8' }
       );
     })
@@ -101,7 +89,7 @@ async function main(argv) {
 }
 
 main(
-  require('minimist')(process.argv.slice(2), {
+  minimist(process.argv.slice(2), {
     alias: {
       outputDirectory: ['d'],
       source: ['s']
