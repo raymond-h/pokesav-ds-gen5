@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { reorderSignaturePixelRows } from '../lib/trainer-card-signature';
+import { reorderSignaturePixelRows } from '../lib/trainer-card-signature.js';
 
 const stringify = (buf, bytesPerRow = 2) => {
   return Array.from(buf)

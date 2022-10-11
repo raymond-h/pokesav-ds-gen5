@@ -3,8 +3,11 @@ import test from 'ava';
 import path from 'path';
 import fse from 'fs-extra';
 
-import { PokesavDsGen5, fromBuffer } from '../lib/index';
-import { asDate } from '../lib/util';
+import { PokesavDsGen5, fromBuffer } from '../lib/index.js';
+import { asDate } from '../lib/util.js';
+
+import * as url from 'url';
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 async function detectMacro(t, filePath, game) {
   const savefile = await fse.readFile(

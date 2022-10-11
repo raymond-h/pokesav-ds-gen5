@@ -2,8 +2,8 @@ import test from 'ava';
 import jsv from 'jsverify';
 import { inspect } from 'util';
 
-import { encryptBuffer, decryptBuffer, shuffleBlocks } from '../lib/encryption-and-order';
-import PokesavDsGen5 from '../formats-compiled/PokesavDsGen5';
+import { encryptBuffer, decryptBuffer, shuffleBlocks } from '../lib/encryption-and-order.js';
+import PokesavDsGen5 from '../formats-compiled/PokesavDsGen5.js';
 
 const bufferArb = jsv.array(jsv.uint8)
   .smap(
